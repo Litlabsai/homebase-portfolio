@@ -14,7 +14,7 @@ function MatrixRain() {
     // Honeycomb hex chars + tech symbols
     const chars = '⬡⬢⬣⬤⬥⬦▲▼◀▶◆◇●○◐◑◒◓★☆✦✧✪✯⌂⌘⌥⌫⌧⏎⚡⚙⚛⚠⚡⛓✓✗⟁⟐⟑⦀⦁⦂⦃⦄⦅⦆⦇⦈⦉⦊⦋⦌⦍⦎⦏⦐⦑⦒⦓⦔⦕⦖⧇⧈⧉⧊⧋⧌⧍⧎⧏⧐⧑⧒⧓⧔⧕⧖⧗⧘⧙⧚⧛⧜⧝⧞⧟⧠⧡⧢⧣⧤⧥⧦⧧⧨⧩⧪⧫⧬⧭⧮⧯⧰⧱⧲⧳⧴⧵⧶⧷⧸⧹⧺⧻⧼⧽⧾⧿'
     
-    const fontSize = 18
+    const fontSize = 24
     const columns = canvas.width / fontSize
     
     const drops = []
@@ -27,7 +27,7 @@ function MatrixRain() {
     
     const draw = () => {
       // Dark amber trail effect
-      ctx.fillStyle = 'rgba(10, 5, 0, 0.08)'
+      ctx.fillStyle = 'rgba(10, 5, 0, 0.04)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       
       ctx.font = fontSize + 'px monospace'
