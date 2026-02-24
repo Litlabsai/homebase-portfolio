@@ -6,6 +6,7 @@ export default defineConfig({
   base: '/homebase-portfolio/',
   build: {
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    emptyOutDir: true
   }
 })
