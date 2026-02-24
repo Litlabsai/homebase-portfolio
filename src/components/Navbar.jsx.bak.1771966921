@@ -1,0 +1,14 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function Navbar() {
+  return (
+    <nav style={{ padding: '1rem', background: '#1a1a1a', color: 'white' }}>
+      <Link to="/" style={{ marginRight: '1rem', color: '#00d4ff' }}>Home</Link>
+      <Link to="/projects" style={{ marginRight: '1rem', color: '#00d4ff' }}>Projects</Link>
+      <Link to="/contact" style={{ color: '#00d4ff' }}>Contact</Link>
+    </nav>
+  );
+}
+
+export default Navbar;
