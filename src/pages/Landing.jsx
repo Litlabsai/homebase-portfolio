@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import MatrixRain from "../components/MatrixRain"
+import Projects from "../components/Projects"
 import { playSound, playAmbient } from "../utils/sounds"
 import "./Landing.css"
 
@@ -63,9 +63,8 @@ function Landing() {
           <span className="btn-glitch"></span>
         </button>
       </Link>
-      <div className="footer-hint">
-        <span className="blink">⚠️</span> PROTOCOL: U0_A242 | NODE: TERMINUX <span className="blink">⚠️</span>
-      </div>
+      
+      <Projects />
     </div>
   )
 }

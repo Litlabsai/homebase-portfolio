@@ -7,9 +7,9 @@
   z-index: 0;
   opacity: 0.4;
   pointer-events: none;
-  background: linear-gradient(180deg, #0d0800 0%, #000000 100%);
+  background: linear-gradient(180deg, #0d0008 0%, #000000 100%);
 }
 
 canvas {
-  filter: drop-shadow(0 0 8px #FFD700) brightness(1.1);
+  filter: drop-shadow(0 0 8px #ff0040) brightness(1.1);
 }

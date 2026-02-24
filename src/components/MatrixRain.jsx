@@ -22,24 +22,24 @@ function MatrixRain() {
       drops[x] = Math.random() * -100
     }
     
-    // Golden honeycomb palette
-    const colors = ['#FFD700', '#FFA500', '#FF8C00', '#DAA520', '#B8860B', '#FFD700']
+    // Cyberpunk red/orange palette
+    const colors = ['#ff0040', '#ff5f56', '#ff8c00', '#ff0000', '#8b0000', '#ff0040']
     
     const draw = () => {
-      // Dark amber trail effect
-      ctx.fillStyle = 'rgba(10, 5, 0, 0.04)'
+      // Dark red trail effect
+      ctx.fillStyle = 'rgba(10, 0, 5, 0.04)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       
       ctx.font = fontSize + 'px monospace'
       
       for (let i = 0; i < drops.length; i++) {
-        // Cycle through golden colors
+        // Cycle through cyberpunk colors
         ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)]
         
         const text = chars.charAt(Math.floor(Math.random() * chars.length))
         
         // Add glow effect
-        ctx.shadowColor = '#FFD700'
+        ctx.shadowColor = '#ff0040'
         ctx.shadowBlur = 10
         
         ctx.fillText(text, i * fontSize, drops[i] * fontSize)
