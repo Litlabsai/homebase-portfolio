@@ -31,7 +31,7 @@ const resolveAlias = (command) => {
 };
 
 
-// eslint-disable-next-line no-unused-vars
+
 const handleSavageCommands = (cmd, projects) => {
   // Simulated eza for projects
   if (cmd.startsWith('eza')) {
@@ -61,7 +61,7 @@ const handleSavageCommands = (cmd, projects) => {
   return null;
 }
 
-// eslint-disable-next-line no-unused-vars
+
 const handleInfoCommands = (cmd, projects) => {
   if (/^(hello|hi|hey|greetings)/.test(cmd)) {
     const responses = [

@@ -110,6 +110,8 @@ dist
 # DynamoDB Local files
 .dynamodb/
 
+.firebase
+
 # TernJS port file
 .tern-port
 
