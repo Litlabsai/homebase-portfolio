@@ -31,10 +31,8 @@ const resolveAlias = (command) => {
 };
 
 
-// --- "Savage" Command Simulation ---
-const generateSavageResponse = (command, projects) => {
-  const cmd = command.toLowerCase().trim();
-
+// eslint-disable-next-line no-unused-vars
+const handleSavageCommands = (cmd, projects) => {
   // Simulated eza for projects
   if (cmd.startsWith('eza')) {
     if (!projects || projects.length === 0) return 'No projects found.';
@@ -49,7 +47,7 @@ const generateSavageResponse = (command, projects) => {
 
   // Simulated bat for project details
   if (cmd.startsWith('bat')) {
-      const projectName = command.split(' ').slice(1).join(' ');
+      const projectName = cmd.split(' ').slice(1).join(' ');
       const project = projects.find(p => p.title.toLowerCase() === projectName.toLowerCase());
       if (!project) return `File not found: ${projectName}`;
       return `--- Project: ${project.title} ---\nStatus: ${project.status}\nDescription: ${project.description || 'N/A'}\nTags: ${project.tags?.join(', ') || 'N/A'}`;
@@ -59,7 +57,12 @@ const generateSavageResponse = (command, projects) => {
   if (cmd.startsWith('git')) {
       return "Git commands are not fully functional in this simulated environment. Use the Projects page to manage your portfolio.";
   }
-  
+
+  return null;
+}
+
+// eslint-disable-next-line no-unused-vars
+const handleInfoCommands = (cmd, projects) => {
   if (/^(hello|hi|hey|greetings)/.test(cmd)) {
     const responses = [
       "Greetings, human. I'm Online and ready to assist.",
@@ -109,13 +112,27 @@ const generateSavageResponse = (command, projects) => {
       return generateSavageResponse('eza -l', projects);
   }
   
-  if (cmd === 'clear') {
-    return '__CLEAR__';
-  }
-
   if (cmd === 'uptime') {
     const days = Math.floor(Math.random() * 999);
     return `System uptime: ${days} days...`;
+  }
+
+  return null;
+}
+
+// --- "Savage" Command Simulation ---
+const generateSavageResponse = (command, projects, clear) => {
+  const cmd = command.toLowerCase().trim();
+
+  const savageResponse = handleSavageCommands(cmd, projects);
+  if (savageResponse) return savageResponse;
+
+  const infoResponse = handleInfoCommands(cmd, projects);
+  if (infoResponse) return infoResponse;
+
+  if (cmd === 'clear') {
+    clear();
+    return null;
   }
 
   // Other simulated commands
@@ -181,13 +198,9 @@ export const useTerminal = () => {
       }
     } else {
       const response = generateSavageResponse(resolvedCmd, projects);
-      
-      if (response === '__CLEAR__') {
-        setHistory([
-          { type: 'response', text: 'Terminal cleared. Type "help" for commands.' }
-        ]);
-      } else {
-        setHistory(prev => [...prev, commandEntry, { type: 'response', text: response }]);
+
+      if (response !== null) {
+        setHistory((prev) => [...prev, commandEntry, { type: "response", text: response }]);
       }
     }
 
@@ -198,8 +211,8 @@ export const useTerminal = () => {
         userId: user.uid,
         createdAt: serverTimestamp(),
       });
-    } catch {
-      // Silent fail
+    } catch (error) {
+      console.error("Failed to save command to history:", error);
     }
   }, [user, projects]);
 
