@@ -1,12 +1,11 @@
 import Sidebar from "../components/Sidebar";
-import Terminal from "../components/Terminal";
 
-const Dashboard = () => {
+const Dashboard = ({ children }) => {
   return (
     <div className="dashboard-layout">
       <Sidebar />
       <main className="dashboard-main">
-        <Terminal />
+        {children}
       </main>
     </div>
   );
