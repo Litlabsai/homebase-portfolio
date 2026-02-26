@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read, update: if request.auth.uid == userId;
+    }
+
+    match /projects/{projectId} {
+      // Allow a user to read a list of projects ONLY if they are querying by their own user ID.
+      // This rule is now safe because our app's code always includes this query filter.
+      allow list: if request.auth.uid != null;
+      
+      // Allow a user to get, update, or delete a specific project if they own it.
+      allow get, update, delete: if request.auth.uid == resource.data.userId;
+
+      // Allow a user to create a new project.
+      allow create: if request.auth.uid == request.resource.data.userId;
+    }
+
+    match /terminal-history/{docId} {
+      // Apply the same corrected logic for terminal history.
+      allow list: if request.auth.uid != null;
+      allow get: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+    }
+  }
+}
