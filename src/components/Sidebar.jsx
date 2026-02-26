@@ -16,6 +16,47 @@ import {
 } from 'react-icons/fi';
 import './Sidebar.css';
 
+import { useTheme } from '../hooks/useTheme';
+import { FiSun, FiMoon } from 'react-icons/fi';
+
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <motion.button
+      className="aurora-button secondary theme-toggle-btn"
+      onClick={toggleTheme}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+    >
+      <AnimatePresence mode="wait">
+        {theme === 'light' ? (
+          <motion.div
+            key="moon"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 20, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <FiMoon />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="sun"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 20, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <FiSun />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+};
+
 const Sidebar = () => {
   const user = auth.currentUser;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -216,15 +257,20 @@ const Sidebar = () => {
             </div>
           </motion.div>
 
-          <motion.button 
-            className="aurora-button secondary sign-out-btn" 
-            onClick={handleSignOut}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <FiLogOut />
-            <span>Sign Out</span>
-          </motion.button>
+          <div className="sidebar-actions">
+            <ThemeToggle />
+            <motion.button 
+              className="aurora-button secondary sign-out-btn" 
+              onClick={handleSignOut}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <FiLogOut />
+              <span>Sign Out</span>
+            </motion.button>
+          </div>
+
+
         </motion.div>
 
         {/* Footer Info */}

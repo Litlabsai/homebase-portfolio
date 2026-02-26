@@ -7,13 +7,16 @@ import './index.css';
 
 import { NotificationProvider } from './components/Notification';
 import EasterEggs from './components/EasterEggs';
+import { ThemeProvider } from './hooks/useTheme';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <NotificationProvider>
-        <EasterEggs />
-        <App />
+        <ThemeProvider>
+          <EasterEggs />
+          <App />
+        </ThemeProvider>
       </NotificationProvider>
     </BrowserRouter>
   </React.StrictMode>
