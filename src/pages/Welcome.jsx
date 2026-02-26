@@ -1,6 +1,6 @@
 import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+
 
 const Welcome = () => {
   const { user } = useAuth();
