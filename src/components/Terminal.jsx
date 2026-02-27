@@ -1,14 +1,44 @@
 import { useState, useEffect, useRef } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
+import { Terminal } from 'xterm';
 import { useTerminal } from '../hooks/useTerminal.jsx';
 import './Terminal.css';
 
-const Terminal = () => {
+const TerminalComponent = () => {
   const [input, setInput] = useState('');
   const { history, loading, executeCommand, clear } = useTerminal();
+  const terminalRef = useRef(null);
   const endOfOutputRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    endOfOutputRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [history]);
+
+  useEffect(() => {
+    const term = new Terminal({
+      fontFamily: 'Fira Code',
+      theme: {
+        background: 'var(--terminal-bg)',
+        foreground: 'var(--terminal-fg)',
+        cursor: 'var(--terminal-cursor)',
+        selection: 'var(--terminal-selection)',
+        black: 'var(--terminal-black)',
+        red: 'var(--terminal-red)',
+        green: 'var(--terminal-green)',
+        yellow: 'var(--terminal-yellow)',
+        blue: 'var(--terminal-blue)',
+        magenta: 'var(--terminal-magenta)',
+        cyan: 'var(--terminal-cyan)',
+        white: 'var(--terminal-white)',
+      }
+    });
+    term.open(terminalRef.current);
+    return () => {
+      term.dispose();
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -22,8 +52,28 @@ const Terminal = () => {
   };
 
   useEffect(() => {
-    endOfOutputRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [history]);
+    const term = new Terminal({
+      fontFamily: 'Fira Code',
+      theme: {
+        background: 'var(--terminal-bg)',
+        foreground: 'var(--terminal-fg)',
+        cursor: 'var(--terminal-cursor)',
+        selection: 'var(--terminal-selection)',
+        black: 'var(--terminal-black)',
+        red: 'var(--terminal-red)',
+        green: 'var(--terminal-green)',
+        yellow: 'var(--terminal-yellow)',
+        blue: 'var(--terminal-blue)',
+        magenta: 'var(--terminal-magenta)',
+        cyan: 'var(--terminal-cyan)',
+        white: 'var(--terminal-white)',
+      }
+    });
+    term.open(terminalRef.current);
+    return () => {
+      term.dispose();
+    };
+  }, []);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -63,7 +113,7 @@ const Terminal = () => {
         </div>
         <div className="terminal-title">Termux</div>
       </div>
-      <div className="terminal-body">
+      <div className="terminal-body" ref={terminalRef}>
         <div className="output-area">
           {loading && <div>Loading terminal history...</div>}
           <AnimatePresence>
@@ -122,4 +172,4 @@ const Terminal = () => {
   );
 };
 
-export default Terminal;
+export default TerminalComponent;

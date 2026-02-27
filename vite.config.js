@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => ({
           router: ['react-router-dom'],
           motion: ['framer-motion'],
           firebase: ['firebase', '@firebase/ai'],
-          icons: ['react-icons']
+          xterm: ['xterm']
         },
         // Optimize chunk file naming for better caching
         entryFileNames: 'assets/[name]-[hash].js',
@@ -75,7 +75,7 @@ export default defineConfig(({ mode }) => ({
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'firebase', 'framer-motion', 'react-router-dom', 'react-icons'],
+    include: ['react', 'react-dom', 'firebase', 'framer-motion', 'react-router-dom', 'react-icons', 'xterm'],
     exclude: []
   },
   esbuild: {

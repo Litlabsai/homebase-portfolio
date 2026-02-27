@@ -1,4 +1,5 @@
 import Sidebar from "../components/Sidebar";
+import TerminalComponent from "../components/Terminal";
 
 const Dashboard = ({ children }) => {
   return (
