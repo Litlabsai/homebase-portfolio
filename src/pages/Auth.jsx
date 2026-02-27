@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "../firebase/firebase";
+import { signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth, googleProvider } from "../config/firebase";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useNotifier } from "../components/Notification";
@@ -9,6 +9,10 @@ import { FiGithub, FiTwitter, FiGlobe } from "react-icons/fi";
 const Auth = () => {
   const { notify } = useNotifier();
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true);
@@ -16,8 +20,37 @@ const Auth = () => {
       await signInWithPopup(auth, googleProvider);
       notify('Welcome to HomeBase Pro! 🚀');
     } catch {
-      // Error handled by UI notification
       notify("Sign-in failed. Please try again.");
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      notify("Passwords do not match");
+      return;
+    }
+    setIsSigningIn(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      notify('Welcome to HomeBase Pro! 🚀');
+    } catch (error) {
+      notify(error.message);
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
+
+  const handleEmailSignIn = async (e) => {
+    e.preventDefault();
+    setIsSigningIn(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      notify('Welcome back! 🎉');
+    } catch (error) {
+      notify(error.message);
     } finally {
       setIsSigningIn(false);
     }
@@ -156,7 +189,7 @@ const Auth = () => {
           The Future of Portfolio Management
         </motion.p>
 
-        {/* Sign In Button */}
+        {/* Google Sign In Button */}
         <motion.button
           variants={itemVariants}
           className="aurora-button"
@@ -224,17 +257,72 @@ const Auth = () => {
           <div style={{ flex: 1, height: '1px', background: 'var(--glass-border)' }} />
         </motion.div>
 
-        {/* Guest Info */}
-        <motion.p 
-          variants={itemVariants}
-          style={{
-            fontSize: '0.875rem',
-            color: 'var(--text-secondary)',
-            marginBottom: '2rem',
-          }}
-        >
-          Secure, fast, and easy portfolio management
-        </motion.p>
+        {/* Email/Password Form */}
+        <motion.div variants={itemVariants}>
+          {isRegistering ? (
+            <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input 
+                type="email" 
+                placeholder="Email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)}
+                className="aurora-input"
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="Password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)}
+                className="aurora-input"
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="Confirm Password" 
+                value={confirmPassword} 
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="aurora-input"
+                required
+              />
+              <button type="submit" className="aurora-button" disabled={isSigningIn}>
+                {isSigningIn ? 'Creating Account...' : 'Sign Up'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleEmailSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input 
+                type="email" 
+                placeholder="Email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)}
+                className="aurora-input"
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="Password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)}
+                className="aurora-input"
+                required
+              />
+              <button type="submit" className="aurora-button" disabled={isSigningIn}>
+                {isSigningIn ? 'Signing In...' : 'Sign In'}
+              </button>
+            </form>
+          )}
+        </motion.div>
+
+        <motion.div variants={itemVariants} style={{ marginTop: '1rem' }}>
+          <button 
+            onClick={() => setIsRegistering(!isRegistering)} 
+            className="aurora-button secondary"
+            style={{ width: '100%' }}
+          >
+            {isRegistering ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+          </button>
+        </motion.div>
 
         {/* Features */}
         <motion.div 
@@ -246,6 +334,7 @@ const Auth = () => {
             padding: '1rem',
             background: 'rgba(127, 90, 240, 0.1)',
             borderRadius: '12px',
+            marginTop: '1.5rem',
           }}
         >
           {[
