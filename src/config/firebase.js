@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getAI, getGenerativeModel } from 'firebase/ai';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDvRoWoEBdqdS85YJApVdKG5KcPOYzOg6k",
-  authDomain: "studio-6082148059-d1fec.web.app",
-  projectId: "studio-6082148059-d1fec",
-  storageBucket: "studio-6082148059-d1fec.appspot.com",
-  messagingSenderId: "144415804580",
-  appId: "1:144415804580:web:7e6465f633e54e8e186a31"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase

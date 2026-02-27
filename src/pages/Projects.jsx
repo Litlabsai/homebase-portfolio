@@ -1,41 +1,60 @@
-import { useState } from 'react';
- 
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNotifier } from '../components/Notification';
-import { useProjects } from '../hooks/useProjects';
+import { collection, onSnapshot, query, where, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../config/firebase';
+import { useAuth } from '../hooks/useAuth';
+import ProjectForm from '../components/ProjectForm';
 import Loader from '../components/Loader';
-import { FiPlus, FiTrash2, FiFilter, FiSearch, FiGrid, FiList } from 'react-icons/fi';
+import { useNotifier } from '../components/Notification';
+import { FiPlus, FiTrash2, FiSearch, FiGrid, FiList, FiEdit2 } from 'react-icons/fi';
 
 const Projects = () => {
-  const { projects, loading, addProject, deleteProject } = useProjects();
+  const { user } = useAuth();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('grid');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState({ title: '', tags: '', description: '' });
   const { notify } = useNotifier();
 
-  const handleAddProject = async (e) => {
-    e.preventDefault();
-    if (!newProject.title.trim()) {
-      notify('Project title is required');
+  useEffect(() => {
+    if (!user) {
       return;
     }
-    await addProject({
-      ...newProject,
-      tags: newProject.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      status: 'Active',
+    const q = query(collection(db, "projects"), where("userId", "==", user.uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const projectsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProjects(projectsData);
+      setLoading(false);
+    }, () => {
+      setLoading(false);
     });
-    setNewProject({ title: '', tags: '', description: '' });
+    return () => {
+      setProjects([]);
+      setLoading(true);
+      unsubscribe();
+    }
+  }, [user]);
+
+  const handleSave = () => {
     setIsModalOpen(false);
-    notify('Project added successfully! 🚀');
   };
 
-  const handleDeleteProject = async (id, title) => {
-    if (window.confirm(`Delete "${title}"? This cannot be undone.`)) {
-      await deleteProject(id);
-      notify('Project deleted');
+  const [currentProject, setCurrentProject] = useState(null);
+
+  const handleDeleteProject = async (id) => {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      await deleteDoc(doc(db, "projects", id));
+      notify('Project deleted successfully! 🗑️');
     }
+  };
+
+
+
+  const openModal = (project = null) => {
+    setCurrentProject(project);
+    setIsModalOpen(true);
   };
 
   if (loading) {
@@ -165,7 +184,7 @@ const Projects = () => {
           {/* Add Button */}
           <motion.button 
             className="aurora-button"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => openModal()}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -229,7 +248,7 @@ const Projects = () => {
                 </p>
                 
                 <div className="project-card-tags">
-                  {project.tags?.map((tag, i) => (
+                  {project.tech?.map((tag, i) => (
                     <motion.span 
                       key={tag} 
                       className="tech-tag"
@@ -247,6 +266,15 @@ const Projects = () => {
                   <div className="project-stats">
                     <span>#{String(index + 1).padStart(3, '0')}</span>
                   </div>
+                  <motion.button
+                    className="edit-btn"
+                    onClick={() => openModal(project)}
+                    title="Edit Project"
+                    whileHover={{ scale: 1.2, color: 'var(--accent-primary)' }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <FiEdit2 />
+                  </motion.button>
                   <motion.button 
                     className="delete-btn" 
                     onClick={() => handleDeleteProject(project.id, project.title)}
@@ -301,71 +329,7 @@ const Projects = () => {
               exit={{ y: 50, opacity: 0, scale: 0.9 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <form onSubmit={handleAddProject} className="add-project-form">
-                <h2 className="modal-title">
-                  <FiPlus style={{ verticalAlign: 'middle', marginRight: '8px' }} />
-                  Add New Project
-                </h2>
-                
-                <div className="form-group">
-                  <label htmlFor="project-title">Project Title *</label>
-                  <input
-                    id="project-title"
-                    type="text"
-                    className="aurora-input"
-                    value={newProject.title}
-                    onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                    placeholder="e.g., My Awesome App"
-                    required
-                    autoFocus
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="project-description">Description</label>
-                  <textarea
-                    id="project-description"
-                    className="aurora-input"
-                    value={newProject.description}
-                    onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                    placeholder="Brief description of your project..."
-                    rows={3}
-                    style={{ resize: 'vertical' }}
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="project-tags">Tags (comma-separated)</label>
-                  <input
-                    id="project-tags"
-                    type="text"
-                    className="aurora-input"
-                    value={newProject.tags}
-                    onChange={(e) => setNewProject({ ...newProject, tags: e.target.value })}
-                    placeholder="e.g., React, Node.js, AI"
-                  />
-                </div>
-                
-                <div className="form-actions">
-                  <motion.button 
-                    type="button" 
-                    className="aurora-button secondary" 
-                    onClick={() => setIsModalOpen(false)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button 
-                    type="submit" 
-                    className="aurora-button"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <FiPlus style={{ marginRight: '4px' }} /> Add Project
-                  </motion.button>
-                </div>
-              </form>
+              <ProjectForm project={currentProject} onSave={handleSave} />
             </motion.div>
           </motion.div>
         )}
