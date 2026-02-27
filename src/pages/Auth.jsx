@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, googleProvider } from "../config/firebase";
-// eslint-disable-next-line no-unused-vars
+ 
 import { motion } from "framer-motion";
 import { useNotifier } from "../components/Notification";
 import { FiGithub, FiTwitter, FiGlobe } from "react-icons/fi";

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-// eslint-disable-next-line no-unused-vars
+ 
 import { motion } from 'framer-motion';
 import { useNotifier } from '../components/Notification';
 import { useUser } from '../hooks/useUser';

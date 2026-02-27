@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
+ 
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { auth } from '../config/firebase';

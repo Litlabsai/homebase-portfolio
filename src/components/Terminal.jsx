@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-// eslint-disable-next-line no-unused-vars
+ 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal } from 'xterm';
 import { useTerminal } from '../hooks/useTerminal.jsx';
