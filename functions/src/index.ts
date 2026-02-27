@@ -4,7 +4,7 @@ import { SYSTEM_CONTEXT } from './systemContext';
 
 // Initialize Groq with the API key from environment variables
 const groq = new Groq({ 
-  apiKey: process.env.GROQ_API_KEY || functions.config().groq?.api_key 
+  apiKey: process.env.GROQ_API_KEY 
 });
 
 const toNumber = (value: string | undefined, fallback: number): number => {
@@ -26,8 +26,8 @@ const maxInputChars = toNumber(
 const compactSystemContext =
   "You are Fallen Angel AI. Reply in short, poetic, cyber-melancholic style. Give direct, accurate guidance. Keep answers concise unless asked for detail.";
 
-export const chatFunction = functions.https.onCall(async (data, context) => {
-  const { message } = data;
+export const chatFunction = functions.https.onCall(async (request) => {
+  const { message } = request.data || {};
 
   if (!message || typeof message !== "string") {
     throw new functions.https.HttpsError('invalid-argument', 'The function must be called with a "message" argument.');
