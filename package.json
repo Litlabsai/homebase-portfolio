@@ -8,7 +8,15 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "check:all": "npm run lint && npm run build"
+    "check:all": "npm run lint && npm run build",
+    "setup": "npm install && npm --prefix functions install",
+    "build:functions": "npm --prefix functions run build",
+    "build:all": "npm run build && npm run build:functions",
+    "sync:check": "bash scripts/sync-check.sh",
+    "deploy:prod": "bash scripts/deploy.sh production",
+    "deploy:staging": "bash scripts/deploy.sh staging",
+    "deploy:prod:functions": "bash scripts/deploy.sh production --functions",
+    "token:test": "node test-groq.cjs"
   },
   "dependencies": {
     "@firebase/ai": "^2.8.0",
@@ -26,7 +34,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "eslint": "^10.0.2",
+    "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.3.0",
