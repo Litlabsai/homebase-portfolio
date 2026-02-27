@@ -38,9 +38,13 @@ alias grid-clean="echo -e '${YELLOW}>>> Purging system corpses...${NC}' && rm -r
 alias grid-logs="echo -e '${CYAN}>>> Accessing AI_CORE logs...${NC}' && firebase functions:log"
 
 # 5. THE NETWORK (GitHub CLI)
-alias grid-pull="echo -e '${CYAN}>>> Pulling from global grid...${NC}' && gh repo sync"
+alias grid-pull="echo -e '${CYAN}>>> Pulling latest (ff-only) from origin...${NC}' && git pull --ff-only origin \$(git branch --show-current)"
 alias grid-pr="echo -e '${CYAN}>>> Opening PR archive...${NC}' && gh pr list"
 alias grid-issue="echo -e '${CYAN}>>> Accessing system failures...${NC}' && gh issue list"
+grid-sync-remote() {
+  echo -e "${YELLOW}>>> Mirror syncing with origin (pull + push)...${NC}"
+  gh repo sync
+}
 grid-save() {
     local msg=${1:-"grid: automated sync"}
     echo -e "${GREEN}>>> Creating checkpoint...${NC}"
