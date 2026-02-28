@@ -1,6 +1,18 @@
 import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 import { Groq } from 'groq-sdk';
 import { SYSTEM_CONTEXT } from './systemContext';
+
+admin.initializeApp();
+
+// Export project-related functions
+export {
+  createProject,
+  getProject,
+  getProjects,
+  updateProject,
+  deleteProject,
+} from "./projects";
 
 // Initialize Groq with the API key from environment variables
 const groq = new Groq({ 

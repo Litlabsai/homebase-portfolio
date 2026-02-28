@@ -18,26 +18,36 @@ fi
 
 # Pull latest
 echo -e "${YELLOW}📥 Pulling latest changes...${NC}"
-git pull origin main || git pull origin gh-pages
+git pull origin main || {
+    echo -e "${RED}❌ Failed to pull from main branch${NC}"
+    exit 1
+}
 
 # Install dependencies
 echo -e "${YELLOW}📦 Installing dependencies...${NC}"
-npm install
+npm install || {
+    echo -e "${RED}❌ Failed to install dependencies${NC}"
+    exit 1
+}
 
 # Build
 echo -e "${YELLOW}🔨 Building...${NC}"
-npm run build
-
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✅ Build successful!${NC}"
-    echo ""
-    echo "Build output in 'dist/' folder"
-    echo ""
-    echo "Deploy options:"
-    echo "  1. Firebase: firebase deploy"
-    echo "  2. GitHub Pages: git add dist && git commit -m 'deploy' && git push"
-    echo "  3. Manual: Upload dist/ folder to your host"
-else
+npm run build || {
     echo -e "${RED}❌ Build failed${NC}"
     exit 1
+}
+
+# Verify dist folder
+if [ ! -d "dist" ]; then
+    echo -e "${RED}❌ dist/ folder not found after build${NC}"
+    exit 1
 fi
+
+echo -e "${GREEN}✅ Build successful!${NC}"
+echo ""
+echo "Build output in 'dist/' folder ($(du -sh dist | cut -f1))"
+echo ""
+echo "Deploy options:"
+echo "  1. Firebase: firebase deploy"
+echo "  2. GitHub Pages: git add dist && git commit -m 'deploy' && git push"
+echo "  3. Manual: Upload dist/ folder to your host"
