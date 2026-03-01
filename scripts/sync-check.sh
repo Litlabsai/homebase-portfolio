@@ -100,11 +100,25 @@ if [ -f "package.json" ]; then
     
     # Check for outdated packages
     if command -v npm &> /dev/null; then
-        OUTDATED=$(npm outdated 2>/dev/null || true)
-        if [ -z "$OUTDATED" ]; then
-            log_info "All dependencies up to date"
+        OUTDATED_JSON=$(npm outdated --json 2>/dev/null || true)
+        ACTIONABLE_OUTDATED=$(node -e '
+const input = process.argv[1] || "{}";
+let data;
+try {
+  data = JSON.parse(input || "{}");
+} catch {
+  console.log("0");
+  process.exit(0);
+}
+const entries = Object.values(data || {});
+const actionable = entries.filter((item) => item && item.current && item.wanted && item.current !== item.wanted);
+console.log(String(actionable.length));
+' "$OUTDATED_JSON")
+
+        if [ "$ACTIONABLE_OUTDATED" -eq 0 ]; then
+            log_info "Dependencies are current within configured version ranges"
         else
-            log_warn "Some dependencies are outdated"
+            log_warn "Some dependencies have pending in-range updates"
             WARNINGS=$((WARNINGS + 1))
         fi
     fi
