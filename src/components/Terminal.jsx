@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
  
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal } from 'xterm';
+import { Terminal } from '@xterm/xterm';
 import { useTerminal } from '../hooks/useTerminal.jsx';
 import './Terminal.css';
 
