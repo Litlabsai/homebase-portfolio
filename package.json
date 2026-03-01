@@ -19,8 +19,8 @@
     "token:test": "node test-groq.cjs"
   },
   "dependencies": {
-    "@firebase/ai": "^2.8.0",
-    "firebase": "^12.9.0",
+    "@firebase/ai": "^2.9.0",
+    "firebase": "^12.10.0",
     "framer-motion": "^12.34.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

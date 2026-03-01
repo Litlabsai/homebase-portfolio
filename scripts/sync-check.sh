@@ -29,21 +29,21 @@ if [ -f ".env.example" ]; then
     log_info ".env.example exists"
 else
     log_error ".env.example missing"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 fi
 
 if [ -f ".env.production" ]; then
     log_info ".env.production exists"
 else
     log_error ".env.production missing"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 fi
 
 if [ -f ".env.staging" ]; then
     log_info ".env.staging exists"
 else
     log_error ".env.staging missing"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 fi
 
 echo ""
@@ -59,18 +59,18 @@ if [ -d ".github/workflows" ]; then
         log_info "CI workflow configured"
     else
         log_warn "CI workflow missing"
-        ((WARNINGS++))
+        WARNINGS=$((WARNINGS + 1))
     fi
     
     if [ -f ".github/workflows/deploy-production.yml" ]; then
         log_info "Production deploy workflow configured"
     else
         log_warn "Production deploy workflow missing"
-        ((WARNINGS++))
+        WARNINGS=$((WARNINGS + 1))
     fi
 else
     log_error ".github/workflows directory missing"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 fi
 
 echo ""
@@ -81,14 +81,14 @@ if [ -f "firebase.json" ]; then
     log_info "firebase.json exists"
 else
     log_error "firebase.json missing"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 fi
 
 if [ -f "firestore.rules" ]; then
     log_info "firestore.rules exists"
 else
     log_warn "firestore.rules missing"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 fi
 
 echo ""
@@ -105,19 +105,19 @@ if [ -f "package.json" ]; then
             log_info "All dependencies up to date"
         else
             log_warn "Some dependencies are outdated"
-            ((WARNINGS++))
+            WARNINGS=$((WARNINGS + 1))
         fi
     fi
 else
     log_error "package.json missing"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 fi
 
 if [ -f "functions/package.json" ]; then
     log_info "Functions package.json exists"
 else
     log_warn "Functions package.json missing"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 fi
 
 echo ""
@@ -129,7 +129,7 @@ if [ -d "src" ]; then
     log_info "Found $FILE_COUNT source files"
 else
     log_error "src directory missing"
-    ((ERRORS++))
+    ERRORS=$((ERRORS + 1))
 fi
 
 # Check for environment config
@@ -137,7 +137,7 @@ if [ -f "src/config/environment.js" ]; then
     log_info "Environment configuration module exists"
 else
     log_warn "Environment configuration module missing"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 fi
 
 # Check for sync hook
@@ -145,7 +145,7 @@ if [ -f "src/hooks/useSync.js" ]; then
     log_info "Synchronization hook exists"
 else
     log_warn "Synchronization hook missing"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 fi
 
 echo ""
@@ -171,7 +171,7 @@ if [ -d ".git" ]; then
         log_info "Working directory clean"
     else
         log_warn "$UNCOMMITTED uncommitted changes"
-        ((WARNINGS++))
+        WARNINGS=$((WARNINGS + 1))
     fi
     
     # Check if branch is synced with remote
@@ -184,18 +184,18 @@ if [ -d ".git" ]; then
             log_info "Branch is synchronized with remote"
         elif [ "$LOCAL" = "$BASE" ]; then
             log_warn "Branch is behind remote (needs pull)"
-            ((WARNINGS++))
+            WARNINGS=$((WARNINGS + 1))
         elif [ "$REMOTE" = "$BASE" ]; then
             log_warn "Branch is ahead of remote (needs push)"
-            ((WARNINGS++))
+            WARNINGS=$((WARNINGS + 1))
         else
             log_error "Branch has diverged from remote"
-            ((ERRORS++))
+            ERRORS=$((ERRORS + 1))
         fi
     fi
 else
     log_warn "Not a Git repository"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 fi
 
 echo ""
