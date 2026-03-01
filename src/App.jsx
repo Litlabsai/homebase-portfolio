@@ -1,7 +1,5 @@
 import { useAuth } from "./hooks/useAuth";
 import { Routes, Route, Navigate, Link } from "react-router-dom";
-// eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
