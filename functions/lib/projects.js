@@ -47,8 +47,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProject = exports.updateProject = exports.getProject = exports.getProjects = exports.createProject = void 0;
 const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
-exports.createProject = functions.https.onCall(async (data, context) => {
-    if (!context.auth) {
+exports.createProject = functions.https.onCall(async (request) => {
+    const { data, auth } = request;
+    if (!auth) {
         throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.");
     }
     const { name, description, url, sourceCodeUrl, tags, imageUrl, status } = data;
@@ -64,7 +65,7 @@ exports.createProject = functions.https.onCall(async (data, context) => {
         tags: tags || [],
         imageUrl: imageUrl || "",
         status: status || "in-progress",
-        userId: context.auth.uid,
+        userId: auth.uid,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
     try {
@@ -76,15 +77,16 @@ exports.createProject = functions.https.onCall(async (data, context) => {
         throw new functions.https.HttpsError("internal", "Error creating project.");
     }
 });
-exports.getProjects = functions.https.onCall(async (data, context) => {
-    if (!context.auth) {
+exports.getProjects = functions.https.onCall(async (request) => {
+    const { auth } = request;
+    if (!auth) {
         throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.");
     }
     try {
         const snapshot = await admin
             .firestore()
             .collection("projects")
-            .where("userId", "==", context.auth.uid)
+            .where("userId", "==", auth.uid)
             .orderBy("createdAt", "desc")
             .get();
         const projects = snapshot.docs.map((doc) => (Object.assign({ id: doc.id }, doc.data())));
@@ -95,8 +97,9 @@ exports.getProjects = functions.https.onCall(async (data, context) => {
         throw new functions.https.HttpsError("internal", "Error getting projects.");
     }
 });
-exports.getProject = functions.https.onCall(async (data, context) => {
-    if (!context.auth) {
+exports.getProject = functions.https.onCall(async (request) => {
+    const { data, auth } = request;
+    if (!auth) {
         throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.");
     }
     const { id } = data;
@@ -110,7 +113,10 @@ exports.getProject = functions.https.onCall(async (data, context) => {
             throw new functions.https.HttpsError("not-found", "Project not found.");
         }
         const projectData = doc.data();
-        if (projectData.userId !== context.auth.uid) {
+        if (!projectData) {
+            throw new functions.https.HttpsError("not-found", "Project not found.");
+        }
+        if (projectData.userId !== auth.uid) {
             throw new functions.https.HttpsError("permission-denied", "You do not have permission to view this project.");
         }
         return { project: Object.assign({ id: doc.id }, projectData) };
@@ -123,9 +129,10 @@ exports.getProject = functions.https.onCall(async (data, context) => {
         throw new functions.https.HttpsError("internal", "Error getting project.");
     }
 });
-exports.updateProject = functions.https.onCall(async (data, context) => {
+exports.updateProject = functions.https.onCall(async (request) => {
     var _a;
-    if (!context.auth) {
+    const { data, auth } = request;
+    if (!auth) {
         throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.");
     }
     const { id } = data, projectUpdateData = __rest(data, ["id"]);
@@ -139,7 +146,7 @@ exports.updateProject = functions.https.onCall(async (data, context) => {
         if (!doc.exists) {
             throw new functions.https.HttpsError("not-found", "Project not found.");
         }
-        if (((_a = doc.data()) === null || _a === void 0 ? void 0 : _a.userId) !== context.auth.uid) {
+        if (((_a = doc.data()) === null || _a === void 0 ? void 0 : _a.userId) !== auth.uid) {
             throw new functions.https.HttpsError("permission-denied", "You do not have permission to update this project.");
         }
         await projectRef.update(projectUpdateData);
@@ -153,9 +160,10 @@ exports.updateProject = functions.https.onCall(async (data, context) => {
         throw new functions.https.HttpsError("internal", "Error updating project.");
     }
 });
-exports.deleteProject = functions.https.onCall(async (data, context) => {
+exports.deleteProject = functions.https.onCall(async (request) => {
     var _a;
-    if (!context.auth) {
+    const { data, auth } = request;
+    if (!auth) {
         throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.");
     }
     const { id } = data;
@@ -169,7 +177,7 @@ exports.deleteProject = functions.https.onCall(async (data, context) => {
         if (!doc.exists) {
             throw new functions.https.HttpsError("not-found", "Project not found.");
         }
-        if (((_a = doc.data()) === null || _a === void 0 ? void 0 : _a.userId) !== context.auth.uid) {
+        if (((_a = doc.data()) === null || _a === void 0 ? void 0 : _a.userId) !== auth.uid) {
             throw new functions.https.HttpsError("permission-denied", "You do not have permission to delete this project.");
         }
         await projectRef.delete();
