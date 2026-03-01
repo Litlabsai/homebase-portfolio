@@ -33,10 +33,19 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.chatFunction = void 0;
+exports.chatFunction = exports.deleteProject = exports.updateProject = exports.getProjects = exports.getProject = exports.createProject = void 0;
 const functions = __importStar(require("firebase-functions"));
+const admin = __importStar(require("firebase-admin"));
 const groq_sdk_1 = require("groq-sdk");
 const systemContext_1 = require("./systemContext");
+admin.initializeApp();
+// Export project-related functions
+var projects_1 = require("./projects");
+Object.defineProperty(exports, "createProject", { enumerable: true, get: function () { return projects_1.createProject; } });
+Object.defineProperty(exports, "getProject", { enumerable: true, get: function () { return projects_1.getProject; } });
+Object.defineProperty(exports, "getProjects", { enumerable: true, get: function () { return projects_1.getProjects; } });
+Object.defineProperty(exports, "updateProject", { enumerable: true, get: function () { return projects_1.updateProject; } });
+Object.defineProperty(exports, "deleteProject", { enumerable: true, get: function () { return projects_1.deleteProject; } });
 // Initialize Groq with the API key from environment variables
 const groq = new groq_sdk_1.Groq({
     apiKey: process.env.GROQ_API_KEY

@@ -1,8 +1,10 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
-export const createProject = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+export const createProject = functions.https.onCall(async (request) => {
+  const { data, auth } = request;
+
+  if (!auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "The function must be called while authenticated."
@@ -27,7 +29,7 @@ export const createProject = functions.https.onCall(async (data, context) => {
     tags: tags || [],
     imageUrl: imageUrl || "",
     status: status || "in-progress",
-    userId: context.auth.uid,
+    userId: auth.uid,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
   };
 
@@ -43,8 +45,10 @@ export const createProject = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const getProjects = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+export const getProjects = functions.https.onCall(async (request) => {
+  const { auth } = request;
+
+  if (!auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "The function must be called while authenticated."
@@ -55,7 +59,7 @@ export const getProjects = functions.https.onCall(async (data, context) => {
     const snapshot = await admin
       .firestore()
       .collection("projects")
-      .where("userId", "==", context.auth.uid)
+      .where("userId", "==", auth.uid)
       .orderBy("createdAt", "desc")
       .get();
 
@@ -71,8 +75,10 @@ export const getProjects = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const getProject = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+export const getProject = functions.https.onCall(async (request) => {
+  const { data, auth } = request;
+
+  if (!auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "The function must be called while authenticated."
@@ -98,7 +104,11 @@ export const getProject = functions.https.onCall(async (data, context) => {
 
     const projectData = doc.data();
 
-    if (projectData.userId !== context.auth.uid) {
+    if (!projectData) {
+      throw new functions.https.HttpsError("not-found", "Project not found.");
+    }
+
+    if (projectData.userId !== auth.uid) {
       throw new functions.https.HttpsError(
         "permission-denied",
         "You do not have permission to view this project."
@@ -115,8 +125,10 @@ export const getProject = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const updateProject = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+export const updateProject = functions.https.onCall(async (request) => {
+  const { data, auth } = request;
+
+  if (!auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "The function must be called while authenticated."
@@ -142,7 +154,7 @@ export const updateProject = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError("not-found", "Project not found.");
     }
 
-    if (doc.data()?.userId !== context.auth.uid) {
+    if (doc.data()?.userId !== auth.uid) {
       throw new functions.https.HttpsError(
         "permission-denied",
         "You do not have permission to update this project."
@@ -161,8 +173,10 @@ export const updateProject = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const deleteProject = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+export const deleteProject = functions.https.onCall(async (request) => {
+  const { data, auth } = request;
+
+  if (!auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "The function must be called while authenticated."
@@ -188,7 +202,7 @@ export const deleteProject = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError("not-found", "Project not found.");
     }
 
-    if (doc.data()?.userId !== context.auth.uid) {
+    if (doc.data()?.userId !== auth.uid) {
       throw new functions.https.HttpsError(
         "permission-denied",
         "You do not have permission to delete this project."
