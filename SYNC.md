@@ -20,7 +20,7 @@ This document outlines the comprehensive synchronization strategy for the HomeBa
 
 HomeBase Pro uses Firebase Firestore as its primary data store with real-time synchronization capabilities.
 
-```
+```text
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 │   Client    │◄───►│   Firestore  │◄───►│   Client    │
 │  (Device A) │     │   (Primary)  │     │  (Device B) │
@@ -66,7 +66,7 @@ console.log(health.pendingChanges); // Number of offline changes
 
 ### Git Workflow
 
-```
+```text
 feature/xxx ──► develop ──► staging ──► main (production)
      │              │            │           │
      │              │            │           │
@@ -83,13 +83,13 @@ feature/xxx ──► develop ──► staging ──► main (production)
 
 ### CI/CD Pipeline
 
-| Stage | Trigger | Actions |
-|-------|---------|---------|
-| Lint | PR / Push | ESLint checks |
-| Build | PR / Push | Vite production build |
-| Test | PR / Push | Unit tests (future) |
-| Deploy Staging | merge to develop | Auto-deploy to staging |
-| Deploy Production | merge to main | Auto-deploy to production |
+| Stage              | Trigger           | Actions                      |
+| ------------------ | ----------------- | ---------------------------- |
+| Lint               | PR / Push         | ESLint checks                |
+| Build              | PR / Push         | Vite production build        |
+| Test               | PR / Push         | Unit tests (future)          |
+| Deploy Staging     | merge to develop  | Auto-deploy to staging       |
+| Deploy Production  | merge to main     | Auto-deploy to production    |
 
 ### Code Quality Gates
 
@@ -104,12 +104,12 @@ feature/xxx ──► develop ──► staging ──► main (production)
 
 ### Environment Files
 
-| File | Purpose | Deployed |
-|------|---------|----------|
-| `.env.example` | Template for developers | No |
-| `.env` | Local development | No |
-| `.env.staging` | Staging environment | Yes |
-| `.env.production` | Production environment | Yes |
+| File                | Purpose                     | Deployed |
+| ------------------- | --------------------------- | -------- |
+| `.env.example`      | Template for developers     | No       |
+| `.env`              | Local development           | No       |
+| `.env.staging`      | Staging environment         | Yes      |
+| `.env.production`   | Production environment      | Yes      |
 
 ### Configuration Module
 
@@ -167,10 +167,13 @@ Deployments are triggered automatically via GitHub Actions:
 
 ### Environment URLs
 
-| Environment | URL |
-|-------------|-----|
-| Production | https://studio-6082148059-d1fec.web.app |
-| Staging | https://staging-studio-6082148059-d1fec.web.app |
+| Environment | URL                                             |
+| ----------- | ----------------------------------------------- |
+| Production  | [site][prod]                                    |
+| Staging     | [site][staging]                                 |
+
+[prod]: https://studio-6082148059-d1fec.web.app
+[staging]: https://staging-studio-6082148059-d1fec.web.app
 
 ---
 
@@ -202,13 +205,13 @@ console.log(sync.getStatus());
 
 ### Alerts
 
-| Condition | Action |
-|-----------|--------|
-| Sync error | Log to console, retry |
-| 3+ sync failures | Show user notification |
-| Offline > 5 min | Show offline indicator |
-| Build failure | GitHub notification |
-| Deployment failure | Slack/Email alert |
+| Condition           | Action                      |
+| ------------------- | --------------------------- |
+| Sync error          | Log to console, retry       |
+| 3+ sync failures    | Show user notification      |
+| Offline > 5 min     | Show offline indicator      |
+| Build failure       | GitHub notification         |
+| Deployment failure  | Slack/Email alert           |
 
 ---
 
@@ -217,10 +220,12 @@ console.log(sync.getStatus());
 ### Sync Failure Recovery
 
 1. Check network connectivity
-2. Verify Firebase status: https://status.firebase.google.com
+2. Verify [Firebase status][firebase-status]
 3. Check browser console for errors
 4. Force refresh: `location.reload()`
 5. Clear local storage if corrupted
+
+[firebase-status]: https://status.firebase.google.com
 
 ### Deployment Failure Recovery
 
@@ -252,10 +257,10 @@ npm run check:all
 
 ### Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `deploy.sh` | Deployment with rollback |
-| `sync-check.sh` | Synchronization verification |
+| Script          | Purpose                        |
+| --------------- | ------------------------------ |
+| `deploy.sh`     | Deployment with rollback       |
+| `sync-check.sh` | Synchronization verification   |
 
 ---
 
